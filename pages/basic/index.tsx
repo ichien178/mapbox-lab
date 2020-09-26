@@ -1,12 +1,12 @@
 import Head from "next/head";
 import Link from "next/link";
 import { useEffect } from "react";
-import main from "./app";
 import styles from "../../styles/Home.module.css";
+import MapContainer from "../../service/map/map";
 
 const Basic = () => {
   useEffect(() => {
-    main();
+    MapContainer.getInstance().init();
   }, []);
 
   return (
