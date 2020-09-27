@@ -36,8 +36,6 @@ jobs:
       # プロジェクトルート直下に.nextディレクトリができる
       - name: build
         run: yarn build
-        env:
-          GITHUB_PAGES: true
 
       # 静的なHTMLとしてNext.jsアプリを生成する
       # プロジェクトルート直下にoutディレクトリができる
