@@ -1,8 +1,30 @@
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import Link from "next/link";
+import { Card, CardActions, CardContent } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import Button from "@material-ui/core/Button";
+
+const useStyles = makeStyles({
+  root: {
+    minWidth: 275,
+  },
+  bullet: {
+    display: "inline-block",
+    margin: "0 2px",
+    transform: "scale(0.8)",
+  },
+  title: {
+    fontSize: 14,
+  },
+  pos: {
+    marginBottom: 12,
+  },
+});
 
 export default function Home() {
+  const classes = useStyles();
+
   return (
     <div className={styles.container}>
       <Head>
@@ -21,12 +43,17 @@ export default function Home() {
         </p>
 
         <div className={styles.grid}>
-          <Link href="/basic">
-            <div className={styles.card}>
-              <h3>basic</h3>
-              <p>Find in-depth information about Next.js features and API.</p>
-            </div>
-          </Link>
+          <Card className={classes.root}>
+            <CardContent>
+              <h2>basic</h2>
+              <p>地図表示</p>
+            </CardContent>
+            <CardActions>
+              <Button size="small">
+                <Link href="/basic">Lean more</Link>
+              </Button>
+            </CardActions>
+          </Card>
         </div>
       </main>
 

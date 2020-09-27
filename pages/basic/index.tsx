@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
 import { useEffect } from "react";
-import styles from "../../styles/Home.module.css";
+import styles from "../../styles/Basic.module.css";
 import MapContainer from "../../service/map/map";
 
 const Basic = () => {
