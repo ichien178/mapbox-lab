@@ -1,3 +1,5 @@
 require("dotenv").config();
 
-export const assetPrefix = process.env.GITHUB_PAGES ? "/repository-name" : "";
+module.exports = {
+  assetPrefix: process.env.GITHUB_PAGES ? "/repository-name" : "",
+};

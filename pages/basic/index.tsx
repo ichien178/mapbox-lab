@@ -12,6 +12,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
+import MapView from "../../component/Map/MapView";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -53,7 +54,7 @@ const Basic = () => {
             </Grid>
           </Toolbar>
         </AppBar>
-        <div id="map" className={styles.map}></div>
+        <MapView></MapView>
       </Container>
     </>
   );
