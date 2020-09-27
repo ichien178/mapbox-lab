@@ -30,18 +30,18 @@ jobs:
 
       # package.jsonに基づき依存パッケージをインストールする
       - name: install
-        run: npm install --frozen-lockfile
+        run: yarn install --frozen-lockfile
 
       # Next.jsアプリをビルドする
       # プロジェクトルート直下に.nextディレクトリができる
       - name: build
-        run: npm run build
+        run: yarn build
 
       # 静的なHTMLとしてNext.jsアプリを生成する
       # プロジェクトルート直下にoutディレクトリができる
       # そのなかに、HTMLファイル群と、それらが読み込むJSファイル群を収めた_nextディレクトリがある
       - name: export
-        run: npm run export
+        run: yarn deploy
 
       # しかしGitHub Pagesの仕様として_から始まるディレクトリが見えず404となる
       # つまりHTMLからJSを読み込めない
