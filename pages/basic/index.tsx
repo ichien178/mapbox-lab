@@ -32,6 +32,7 @@ const Basic = () => {
   return (
     <>
       <Container maxWidth={false}>
+        {/* App Header */}
         <AppBar position="static" color="inherit">
           <Toolbar>
             <Grid
@@ -54,6 +55,7 @@ const Basic = () => {
             </Grid>
           </Toolbar>
         </AppBar>
+        {/* 地図 */}
         <MapView></MapView>
       </Container>
     </>
