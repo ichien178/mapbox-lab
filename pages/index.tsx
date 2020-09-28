@@ -38,12 +38,21 @@ export default function Home() {
         <div className={styles.grid}>
           <Card className={classes.root}>
             <CardContent>
-              <h2>basic</h2>
-              <p>地図表示</p>
+              <h2>地図表示</h2>
             </CardContent>
             <CardActions>
               <Button size="small">
-                <Link href="/basic">Lean more</Link>
+                <Link href="/basic">詳しく見る</Link>
+              </Button>
+            </CardActions>
+          </Card>
+          <Card className={classes.root}>
+            <CardContent>
+              <h2>経路表示</h2>
+            </CardContent>
+            <CardActions>
+              <Button size="small">
+                <Link href="/polyline">詳しく見る</Link>
               </Button>
             </CardActions>
           </Card>
