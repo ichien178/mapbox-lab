@@ -6,8 +6,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const MapView = () => {
+const MapView = (props: { mapRef: any }) => {
   const classes = useStyles();
-  return <div id="map" className={classes.map}></div>;
+  return <div id="map" ref={props.mapRef} className={classes.map}></div>;
 };
 export default MapView;

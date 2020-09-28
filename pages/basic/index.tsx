@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Link from "next/link";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import styles from "../../styles/Basic.module.css";
 import MapContainer from "../../service/map/map";
 import {
@@ -13,6 +13,8 @@ import {
 } from "@material-ui/core";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import MapView from "../../component/Map/MapView";
+import mapboxgl from "mapbox-gl";
+import { MapConst } from "../../service/map/const";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,8 +27,10 @@ const useStyles = makeStyles((theme) => ({
 
 const Basic = () => {
   const classes = useStyles();
+  const mapContainerRef = useRef(null);
   useEffect(() => {
-    MapContainer.getInstance().init();
+    const map = MapContainer.getInstance().init(mapContainerRef.current);
+    return () => map.remove();
   }, []);
 
   return (
@@ -56,7 +60,7 @@ const Basic = () => {
           </Toolbar>
         </AppBar>
         {/* 地図 */}
-        <MapView></MapView>
+        <MapView mapRef={mapContainerRef}></MapView>
       </Container>
     </>
   );

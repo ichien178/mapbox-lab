@@ -16,14 +16,15 @@ class MapContainer {
     return MapContainer.instance;
   };
 
-  public init = () => {
+  public init = (container: HTMLElement | string): mapboxgl.Map => {
     if (this.initialized) {
-      return;
+      this.map.remove();
+      this.map = null;
     }
 
     mapboxgl.accessToken = MapConst.ACCESS_TOKEN;
     this.map = new mapboxgl.Map({
-      container: "map",
+      container: container,
       style: MapConst.StyleId.STREET,
       center: [
         MapConst.POINT_TOKYO_STATION.lng,
@@ -31,6 +32,7 @@ class MapContainer {
       ],
       zoom: 11,
     });
+    return this.map;
   };
 
   public getMap(): mapboxgl.Map | null {
