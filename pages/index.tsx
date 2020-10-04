@@ -46,13 +46,23 @@ export default function Home() {
               </Button>
             </CardActions>
           </Card>
-          <Card className={classes.root}>
+          {/* <Card className={classes.root}>
             <CardContent>
               <h2>経路表示</h2>
             </CardContent>
             <CardActions>
               <Button size="small">
                 <Link href="/polyline">詳しく見る</Link>
+              </Button>
+            </CardActions>
+          </Card> */}
+          <Card className={classes.root}>
+            <CardContent>
+              <h2>マーカー表示</h2>
+            </CardContent>
+            <CardActions>
+              <Button size="small">
+                <Link href="/marker">詳しく見る</Link>
               </Button>
             </CardActions>
           </Card>

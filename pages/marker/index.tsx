@@ -1,11 +1,5 @@
-import Head from "next/head";
-import Link from "next/link";
-import React, { useEffect, useRef } from "react";
-import styles from "../../styles/Basic.module.css";
-import MapContainer from "../../service/map/map";
 import {
   AppBar,
-  Box,
   Container,
   Grid,
   makeStyles,
@@ -13,8 +7,10 @@ import {
   Typography,
 } from "@material-ui/core";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
+import Link from "next/link";
+import React from "react";
+import { Marker } from "react-map-gl";
 import MapView from "../../component/Map/MapView";
-import mapboxgl from "mapbox-gl";
 import { MapConst } from "../../service/map/const";
 
 const useStyles = makeStyles((theme) => ({
@@ -28,12 +24,6 @@ const useStyles = makeStyles((theme) => ({
 
 const Basic = () => {
   const classes = useStyles();
-  const mapContainerRef = useRef(null);
-  // useEffect(() => {
-  //   const map = MapContainer.getInstance().init(mapContainerRef.current);
-  //   return () => map.remove();
-  // }, []);
-
   return (
     <>
       <Container maxWidth={false}>
@@ -49,7 +39,7 @@ const Basic = () => {
             >
               <Grid item>
                 <Typography variant="h6" className={classes.title}>
-                  Basic
+                  マーカー表示
                 </Typography>
               </Grid>
               <Grid item>
@@ -61,7 +51,16 @@ const Basic = () => {
           </Toolbar>
         </AppBar>
         {/* 地図 */}
-        <MapView></MapView>
+        <MapView>
+          <Marker
+            latitude={MapConst.POINT_TOKYO_STATION.lat}
+            longitude={MapConst.POINT_TOKYO_STATION.lng}
+            offsetLeft={-20}
+            offsetTop={-10}
+          >
+            <img src="https://icons.iconarchive.com/icons/icons8/windows-8/96/Cinema-Batman-Old-icon.png" />
+          </Marker>
+        </MapView>
       </Container>
     </>
   );
