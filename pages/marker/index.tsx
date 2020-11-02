@@ -11,7 +11,7 @@ import Link from "next/link";
 import React from "react";
 import { Marker } from "react-map-gl";
 import MapView from "../../component/Map/MapView";
-import { MapConst } from "../../service/map/const";
+import { MapConst } from "../../styles/service/map/const";
 
 const useStyles = makeStyles((theme) => ({
   root: {

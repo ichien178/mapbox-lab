@@ -1,8 +1,3 @@
-import Head from "next/head";
-import Link from "next/link";
-import React, { useEffect, useRef } from "react";
-import styles from "../../styles/Basic.module.css";
-import MapContainer from "../../service/map/map";
 import {
   AppBar,
   Container,
@@ -12,8 +7,11 @@ import {
   Typography,
 } from "@material-ui/core";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
+import mapboxgl, { GeoJSONSourceRaw } from "mapbox-gl";
+import Link from "next/link";
+import React, { useEffect, useRef } from "react";
 import MapView from "../../component/Map/MapView";
-import mapboxgl, { GeoJSONSourceRaw, Source } from "mapbox-gl";
+import MapContainer from "../../styles/service/map/map";
 
 const useStyles = makeStyles((theme) => ({
   root: {

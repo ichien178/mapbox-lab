@@ -1,6 +1,6 @@
 import { RefObject, useState } from "react";
 import ReactMapGL from "react-map-gl";
-import { MapConst } from "../../service/map/const";
+import { MapConst } from "../../styles/service/map/const";
 
 // const useStyles = makeStyles((theme) => ({
 //   map: {

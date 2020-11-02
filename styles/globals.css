@@ -14,3 +14,28 @@ a {
 * {
   box-sizing: border-box;
 }
+
+@tailwind base;
+@tailwind components;
+
+.btn-blue {
+  @apply bg-blue-500;
+  @apply text-white;
+  @apply font-bold;
+  @apply py-2;
+  @apply px-4;
+  @apply rounded;
+}
+
+.hero {
+  @apply py-20;
+}
+
+.title {
+  @apply text-center;
+  @apply text-5xl;
+  color: #333;
+  line-height: 1.15;
+}
+
+@tailwind utilities;

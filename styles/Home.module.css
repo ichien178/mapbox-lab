@@ -48,8 +48,9 @@
 
 .title {
   margin: 0;
-  line-height: 1.15;
-  font-size: 4rem;
+  @apply font-black;
+  @apply text-6xl;
+  @apply font-mono;
 }
 
 .title,
