@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { RefObject, useState } from "react";
 import ReactMapGL from "react-map-gl";
 import { MapConst } from "../../service/map/const";
 
@@ -24,7 +24,12 @@ const defaultMapViewPort: MapViewPort = {
   zoom: 10,
 };
 
-const MapView = ({ children, props }) => {
+interface Props {
+  children?: React.ReactNode;
+  mapRef?: RefObject<any>;
+}
+
+const MapView: React.FC<Props> = (props) => {
   const [design, setViewPort] = useState<MapViewPort>(defaultMapViewPort);
   return (
     <ReactMapGL
@@ -41,7 +46,7 @@ const MapView = ({ children, props }) => {
         })
       }
     >
-      {children}
+      {props.children && props.children}
     </ReactMapGL>
   );
 };
