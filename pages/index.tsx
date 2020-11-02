@@ -3,6 +3,7 @@ import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import Head from "next/head";
 import Link from "next/link";
+import GithubRibbon from "../component/link/GithubRibbon";
 import styles from "../styles/Home.module.css";
 
 const useStyles = makeStyles({
@@ -33,6 +34,7 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
+        <GithubRibbon></GithubRibbon>
         <h1 className={styles.title}>Welcome to Mapbox-Lab</h1>
 
         <div className={styles.grid}>
