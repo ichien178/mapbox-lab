@@ -137,7 +137,9 @@ const SymbolLayer: React.FC = () => {
             </Grid>
           </Toolbar>
         </AppBar>
-        <label className="text-gray-600 font-light">encodedPolyline</label>
+        <label className="text-gray-600 font-light">
+          encodedPolyline(precision:6)
+        </label>
         <input
           id="polyline"
           type="text"
