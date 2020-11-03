@@ -28,7 +28,9 @@ const useStyles = makeStyles((theme) => ({
 const SymbolLayer: React.FC = () => {
   const classes = useStyles();
   const [viewport, setViewPort] = useState<MapViewPort>(DEFAULT_MAP_VIEWPORT);
-  const [encodedPolyline, setEncodedPolyline] = useState<string>("");
+  const [encodedPolyline, setEncodedPolyline] = useState<string>(
+    "cxl_cBqwvnS|Dy@ogFyxmAf`IsnA|CjFzCsHluD_k@hi@ljL"
+  );
   const [points, setPoints] = useState<string>("");
   const [geojsonRouteLayer, setGeojsonRouteLayer] = useState<
     GeoJSON.Feature<GeoJSON.LineString | null>
@@ -85,6 +87,10 @@ const SymbolLayer: React.FC = () => {
   };
 
   useEffect(() => {
+    onUpdate();
+  }, []);
+
+  useEffect(() => {
     if (!geojsonRouteLayer) {
       return;
     }
@@ -92,7 +98,7 @@ const SymbolLayer: React.FC = () => {
     const { longitude, latitude, zoom } = new WebMercatorViewport({
       width: 400,
       height: 400,
-    }).fitBounds(geojsonRouteLayer.geometry.coordinates as any, {
+    }).fitBounds([...geojsonRouteLayer.geometry.coordinates] as any, {
       padding: 20,
       offset: [0, -100],
     });
@@ -181,7 +187,7 @@ const SymbolLayer: React.FC = () => {
                 type="circle"
                 paint={{
                   "circle-radius": 10,
-                  "circle-color": "#007cbf",
+                  "circle-color": "#ff0000",
                 }}
               />
             </Source>
