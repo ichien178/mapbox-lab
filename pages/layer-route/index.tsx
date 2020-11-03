@@ -1,3 +1,4 @@
+import polyline from "@mapbox/polyline";
 import {
   AppBar,
   Container,
@@ -24,54 +25,74 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const encodedPolyline = "";
-
-const coordinates = [
-  [-122.48369693756104, 37.83381888486939],
-  [-122.48348236083984, 37.83317489144141],
-  [-122.48339653015138, 37.83270036637107],
-  [-122.48356819152832, 37.832056363179625],
-  [-122.48404026031496, 37.83114119107971],
-  [-122.48404026031496, 37.83049717427869],
-  [-122.48348236083984, 37.829920943955045],
-  [-122.48356819152832, 37.82954808664175],
-  [-122.48507022857666, 37.82944639795659],
-  [-122.48610019683838, 37.82880236636284],
-  [-122.48695850372314, 37.82931081282506],
-  [-122.48700141906738, 37.83080223556934],
-  [-122.48751640319824, 37.83168351665737],
-  [-122.48803138732912, 37.832158048267786],
-  [-122.48888969421387, 37.83297152392784],
-  [-122.48987674713133, 37.83263257682617],
-  [-122.49043464660643, 37.832937629287755],
-  [-122.49125003814696, 37.832429207817725],
-  [-122.49163627624512, 37.832564787218985],
-  [-122.49223709106445, 37.83337825839438],
-  [-122.49378204345702, 37.83368330777276],
-];
-
-const geojson = {
-  type: "Feature",
-  geometry: {
-    type: "LineString",
-    coordinates: coordinates,
-  },
-} as GeoJSON.Feature<GeoJSON.LineString>;
-
 const SymbolLayer: React.FC = () => {
   const classes = useStyles();
   const [viewport, setViewPort] = useState<MapViewPort>(DEFAULT_MAP_VIEWPORT);
+  const [encodedPolyline, setEncodedPolyline] = useState<string>("");
+  const [points, setPoints] = useState<string>("");
+  const [geojsonRouteLayer, setGeojsonRouteLayer] = useState<
+    GeoJSON.Feature<GeoJSON.LineString | null>
+  >(null);
+  const [
+    geojsonPoint,
+    setGeojsonPoint,
+  ] = useState<GeoJSON.FeatureCollection | null>(null);
 
   const onViewportChange = (viewport: MapViewPort): MapViewPort => {
     setViewPort(viewport);
     return viewport;
   };
 
+  const onUpdate = () => {
+    const polylineCoordinates =
+      encodedPolyline !== ""
+        ? polyline.decode(encodedPolyline, 6).map((p) => [p[1], p[0]])
+        : null;
+    const geojsonRouteLayer = polylineCoordinates
+      ? ({
+          type: "Feature",
+          geometry: {
+            type: "LineString",
+            coordinates: polylineCoordinates,
+          },
+        } as GeoJSON.Feature<GeoJSON.LineString>)
+      : null;
+    setGeojsonRouteLayer(geojsonRouteLayer);
+
+    const coordinates = points
+      .split("\n")
+      .filter((l) => l !== "")
+      .map((p) => {
+        const latLng = p.split(",");
+        return [Number(latLng[1]), Number(latLng[0])];
+      })
+      .map((c) => {
+        return {
+          type: "Feature",
+          geometry: { type: "Point", coordinates: c },
+        };
+      });
+
+    const geojsonPoint =
+      coordinates.length > 0
+        ? ({
+            type: "FeatureCollection",
+            features: coordinates,
+          } as GeoJSON.FeatureCollection)
+        : null;
+
+    setGeojsonPoint(geojsonPoint);
+  };
+
   useEffect(() => {
+    if (!geojsonRouteLayer) {
+      return;
+    }
+
     const { longitude, latitude, zoom } = new WebMercatorViewport({
       width: 400,
       height: 400,
-    }).fitBounds(geojson.geometry.coordinates as any, {
+    }).fitBounds(geojsonRouteLayer.geometry.coordinates as any, {
       padding: 20,
       offset: [0, -100],
     });
@@ -82,7 +103,7 @@ const SymbolLayer: React.FC = () => {
       longitude: longitude,
       latitude: latitude,
     });
-  }, []);
+  }, [geojsonRouteLayer, geojsonPoint]);
 
   return (
     <>
@@ -110,22 +131,61 @@ const SymbolLayer: React.FC = () => {
             </Grid>
           </Toolbar>
         </AppBar>
+        <label className="text-gray-600 font-light">encodedPolyline</label>
+        <input
+          id="polyline"
+          type="text"
+          value={encodedPolyline}
+          placeholder="Enter your encoded polyline"
+          onChange={(e) => setEncodedPolyline(e.target.value)}
+          className="w-full mt-2 mb-6 px-6 py-3 border rounded-lg text-lg text-gray-700 focus:outline-none"
+        />
+        <label className="text-gray-600 font-light">coordinates</label>
+        <textarea
+          id="points"
+          value={points}
+          placeholder={"lat1,lon1\nlat2,lon2"}
+          onChange={(e) => setPoints(e.target.value)}
+          className="w-full mt-2 mb-6 px-6 py-3 border rounded-lg text-lg text-gray-700 focus:outline-none"
+        />
+        <button
+          id="update"
+          onClick={onUpdate}
+          type="button"
+          className="mb-1 w-full bg-blue-600 text-gray-200 rounded hover:bg-blue-500 px-4 py-2 focus:outline-none"
+        >
+          update
+        </button>
         {/* 地図 */}
         <MapView viewport={viewport} onViewportChange={onViewportChange}>
-          <Source id="my-data" type="geojson" data={geojson}>
-            <Layer
-              id="line"
-              type="line"
-              layout={{
-                "line-join": "round",
-                "line-cap": "round",
-              }}
-              paint={{
-                "line-color": "#0000ff",
-                "line-width": 8,
-              }}
-            />
-          </Source>
+          {geojsonRouteLayer && (
+            <Source id="route" type="geojson" data={geojsonRouteLayer}>
+              <Layer
+                id="line"
+                type="line"
+                layout={{
+                  "line-join": "round",
+                  "line-cap": "round",
+                }}
+                paint={{
+                  "line-color": "#0000ff",
+                  "line-width": 8,
+                }}
+              />
+            </Source>
+          )}
+          {geojsonPoint && (
+            <Source id="points" type="geojson" data={geojsonPoint}>
+              <Layer
+                id="point"
+                type="circle"
+                paint={{
+                  "circle-radius": 10,
+                  "circle-color": "#007cbf",
+                }}
+              />
+            </Source>
+          )}
         </MapView>
       </Container>
     </>
