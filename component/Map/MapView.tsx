@@ -1,4 +1,4 @@
-import { RefObject, useState } from "react";
+import { RefObject } from "react";
 import ReactMapGL from "react-map-gl";
 import { MapConst } from "../../styles/service/map/const";
 
@@ -8,7 +8,7 @@ import { MapConst } from "../../styles/service/map/const";
 //   },
 // }));
 
-interface MapViewPort {
+export interface MapViewPort {
   width: number | string;
   height: number | string;
   latitude: number;
@@ -16,7 +16,7 @@ interface MapViewPort {
   zoom: number;
 }
 
-const defaultMapViewPort: MapViewPort = {
+export const DEFAULT_MAP_VIEWPORT: MapViewPort = {
   width: "100%",
   height: "90vh",
   latitude: MapConst.POINT_TOKYO_STATION.lat,
@@ -27,24 +27,19 @@ const defaultMapViewPort: MapViewPort = {
 interface Props {
   children?: React.ReactNode;
   mapRef?: RefObject<any>;
+  viewport?: MapViewPort;
+  onViewportChange?: (viewPort: MapViewPort) => MapViewPort;
 }
 
 const MapView: React.FC<Props> = (props) => {
-  const [design, setViewPort] = useState<MapViewPort>(defaultMapViewPort);
   return (
     <ReactMapGL
       mapStyle={MapConst.StyleId.STREET}
       mapboxApiAccessToken={MapConst.ACCESS_TOKEN}
-      {...design}
-      onViewportChange={(viewport) =>
-        setViewPort({
-          width: viewport.width,
-          height: viewport.height,
-          latitude: viewport.latitude,
-          longitude: viewport.longitude,
-          zoom: viewport.zoom,
-        })
-      }
+      {...props.viewport}
+      onViewportChange={(viewport) => {
+        return props.onViewportChange(viewport);
+      }}
     >
       {props.children && props.children}
     </ReactMapGL>

@@ -4,13 +4,16 @@ import {
   Grid,
   makeStyles,
   Toolbar,
-  Typography,
+  Typography
 } from "@material-ui/core";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { Marker } from "react-map-gl";
-import MapView from "../../component/Map/MapView";
+import MapView, {
+  DEFAULT_MAP_VIEWPORT,
+  MapViewPort
+} from "../../component/Map/MapView";
 import { MapConst } from "../../styles/service/map/const";
 
 const useStyles = makeStyles((theme) => ({
@@ -24,6 +27,14 @@ const useStyles = makeStyles((theme) => ({
 
 const Basic = () => {
   const classes = useStyles();
+
+  const [viewport, setViewPort] = useState<MapViewPort>(DEFAULT_MAP_VIEWPORT);
+
+  const onViewportChange = (viewport: MapViewPort): MapViewPort => {
+    setViewPort(viewport);
+    return viewport;
+  };
+
   return (
     <>
       <Container maxWidth={false}>
@@ -51,7 +62,7 @@ const Basic = () => {
           </Toolbar>
         </AppBar>
         {/* 地図 */}
-        <MapView>
+        <MapView viewport={viewport} onViewportChange={onViewportChange}>
           <Marker
             latitude={MapConst.POINT_TOKYO_STATION.lat}
             longitude={MapConst.POINT_TOKYO_STATION.lng}
