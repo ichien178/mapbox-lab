@@ -17,10 +17,7 @@ import MapView, {
   DEFAULT_MAP_VIEWPORT,
   MapViewPort,
 } from "../../component/Map/MapView";
-import {
-  parseCoordinatesByMultiLine,
-  parseCoordinatesBySingleLine,
-} from "../../service/points/parser";
+import { parseCoordinatesByMultiLine } from "../../service/points/parser";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,7 +35,7 @@ const SymbolLayer: React.FC = () => {
     "ivy`cAskvqiGtxNl{IxlKdaG"
   );
   const [points, setPoints] = useState<string>(
-    "35.669031,139.747353\n35.676966,139.761022"
+    "136.899219,35.175782;136.900863,35.158444\n136.800863,35.158444"
   );
   const [geojsonRouteLayer, setGeojsonRouteLayer] = useState<
     GeoJSON.Feature<GeoJSON.LineString | null>
@@ -68,22 +65,12 @@ const SymbolLayer: React.FC = () => {
       : null;
     setGeojsonRouteLayer(geojsonRouteLayer);
 
-    let coordinates;
-    if (points.indexOf(";") > 0) {
-      coordinates = parseCoordinatesBySingleLine(points).map((c) => {
-        return {
-          type: "Feature",
-          geometry: { type: "Point", coordinates: [c.lng, c.lat] },
-        };
-      });
-    } else {
-      coordinates = parseCoordinatesByMultiLine(points).map((c) => {
-        return {
-          type: "Feature",
-          geometry: { type: "Point", coordinates: [c.lng, c.lat] },
-        };
-      });
-    }
+    const coordinates = parseCoordinatesByMultiLine(points).map((c) => {
+      return {
+        type: "Feature",
+        geometry: { type: "Point", coordinates: [c.lng, c.lat] },
+      };
+    });
 
     const geojsonPoint =
       coordinates.length > 0
