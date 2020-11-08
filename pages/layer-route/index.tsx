@@ -8,8 +8,11 @@ import {
   Typography,
 } from "@material-ui/core";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
+import { isEmpty } from "lodash";
 import mapboxgl from "mapbox-gl";
+import { NextPage } from "next";
 import Link from "next/link";
+import Router from "next/router";
 import React, { useEffect, useState } from "react";
 import { Layer, Source, WebMercatorViewport } from "react-map-gl";
 import turf from "turf";
@@ -28,14 +31,21 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SymbolLayer: React.FC = () => {
+interface Props {
+  query: { pl?: string; points?: string };
+}
+
+const SymbolLayer: NextPage<Props, any> = (props) => {
+  console.log(props);
   const classes = useStyles();
   const [viewport, setViewPort] = useState<MapViewPort>(DEFAULT_MAP_VIEWPORT);
   const [encodedPolyline, setEncodedPolyline] = useState<string>(
-    "ivy`cAskvqiGtxNl{IxlKdaG"
+    props.query.pl ?? ""
+    // "ivy`cAskvqiGtxNl{IxlKdaG"
   );
   const [points, setPoints] = useState<string>(
-    "136.899219,35.175782;136.900863,35.158444\n136.800863,35.158444"
+    props.query.points ??
+      "136.899219,35.175782;136.900863,35.158444\n136.800863,35.158444"
   );
   const [geojsonRouteLayer, setGeojsonRouteLayer] = useState<
     GeoJSON.Feature<GeoJSON.LineString | null>
@@ -49,7 +59,8 @@ const SymbolLayer: React.FC = () => {
     return viewport;
   };
 
-  const onUpdate = () => {
+  const onMapUpdate = () => {
+    // polyline
     const polylineCoordinates =
       encodedPolyline !== ""
         ? polyline.decode(encodedPolyline, 6).map((p) => [p[1], p[0]])
@@ -65,13 +76,13 @@ const SymbolLayer: React.FC = () => {
       : null;
     setGeojsonRouteLayer(geojsonRouteLayer);
 
+    // points
     const coordinates = parseCoordinatesByMultiLine(points).map((c) => {
       return {
         type: "Feature",
         geometry: { type: "Point", coordinates: [c.lng, c.lat] },
       };
     });
-
     const geojsonPoint =
       coordinates.length > 0
         ? ({
@@ -79,14 +90,19 @@ const SymbolLayer: React.FC = () => {
             features: coordinates,
           } as GeoJSON.FeatureCollection<GeoJSON.Point>)
         : null;
-
     setGeojsonPoint(geojsonPoint);
   };
 
+  /**
+   * 地図更新
+   */
   useEffect(() => {
-    onUpdate();
+    onMapUpdate();
   }, []);
 
+  /**
+   * 地図移動
+   */
   useEffect(() => {
     if (!geojsonRouteLayer && !geojsonPoint) {
       return;
@@ -120,6 +136,22 @@ const SymbolLayer: React.FC = () => {
       latitude: latitude,
     });
   }, [geojsonRouteLayer, geojsonPoint]);
+
+  /**
+   * URL更新
+   */
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (!isEmpty(encodedPolyline)) {
+      params.set("pl", encodedPolyline);
+    }
+    if (!isEmpty(points)) {
+      params.set("points", points);
+    }
+    Router.push({
+      query: params.toString(),
+    });
+  }, []);
 
   return (
     <>
@@ -168,7 +200,7 @@ const SymbolLayer: React.FC = () => {
         />
         <button
           id="update"
-          onClick={onUpdate}
+          onClick={onMapUpdate}
           type="button"
           className="mb-1 w-full bg-blue-600 text-gray-200 rounded hover:bg-blue-500 px-4 py-2 focus:outline-none"
         >
@@ -208,6 +240,10 @@ const SymbolLayer: React.FC = () => {
       </Container>
     </>
   );
+};
+
+SymbolLayer.getInitialProps = ({ query }) => {
+  return { query };
 };
 
 export default SymbolLayer;
