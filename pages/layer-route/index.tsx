@@ -151,7 +151,7 @@ const SymbolLayer: NextPage<Props, any> = (props) => {
     Router.push({
       query: params.toString(),
     });
-  }, []);
+  }, [encodedPolyline, points]);
 
   return (
     <>
