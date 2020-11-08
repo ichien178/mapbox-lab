@@ -8,13 +8,16 @@ import {
   Typography,
 } from "@material-ui/core";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
+import mapboxgl from "mapbox-gl";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { Layer, Source, WebMercatorViewport } from "react-map-gl";
+import turf from "turf";
 import MapView, {
   DEFAULT_MAP_VIEWPORT,
   MapViewPort,
 } from "../../component/Map/MapView";
+import { parseCoordinatesByMultiLine } from "../../service/points/parser";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,16 +32,17 @@ const SymbolLayer: React.FC = () => {
   const classes = useStyles();
   const [viewport, setViewPort] = useState<MapViewPort>(DEFAULT_MAP_VIEWPORT);
   const [encodedPolyline, setEncodedPolyline] = useState<string>(
-    "cxl_cBqwvnS|Dy@ogFyxmAf`IsnA|CjFzCsHluD_k@hi@ljL"
+    "ivy`cAskvqiGtxNl{IxlKdaG"
   );
-  const [points, setPoints] = useState<string>("");
+  const [points, setPoints] = useState<string>(
+    "35.669031,139.747353\n35.676966,139.761022"
+  );
   const [geojsonRouteLayer, setGeojsonRouteLayer] = useState<
     GeoJSON.Feature<GeoJSON.LineString | null>
   >(null);
-  const [
-    geojsonPoint,
-    setGeojsonPoint,
-  ] = useState<GeoJSON.FeatureCollection | null>(null);
+  const [geojsonPoint, setGeojsonPoint] = useState<GeoJSON.FeatureCollection<
+    GeoJSON.Point
+  > | null>(null);
 
   const onViewportChange = (viewport: MapViewPort): MapViewPort => {
     setViewPort(viewport);
@@ -61,26 +65,19 @@ const SymbolLayer: React.FC = () => {
       : null;
     setGeojsonRouteLayer(geojsonRouteLayer);
 
-    const coordinates = points
-      .split("\n")
-      .filter((l) => l !== "")
-      .map((p) => {
-        const latLng = p.split(",");
-        return [Number(latLng[1]), Number(latLng[0])];
-      })
-      .map((c) => {
-        return {
-          type: "Feature",
-          geometry: { type: "Point", coordinates: c },
-        };
-      });
+    const coordinates = parseCoordinatesByMultiLine(points).map((c) => {
+      return {
+        type: "Feature",
+        geometry: { type: "Point", coordinates: [c.lng, c.lat] },
+      };
+    });
 
     const geojsonPoint =
       coordinates.length > 0
         ? ({
             type: "FeatureCollection",
             features: coordinates,
-          } as GeoJSON.FeatureCollection)
+          } as GeoJSON.FeatureCollection<GeoJSON.Point>)
         : null;
 
     setGeojsonPoint(geojsonPoint);
@@ -91,14 +88,27 @@ const SymbolLayer: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!geojsonRouteLayer) {
+    if (!geojsonRouteLayer && !geojsonPoint) {
       return;
     }
+
+    const coordinates = [
+      ...(geojsonRouteLayer?.geometry.coordinates ?? []).concat(
+        geojsonPoint?.features.map((f) => {
+          const c = f.geometry.coordinates;
+          return [c[0], c[1]];
+        }) ?? []
+      ),
+    ];
+    console.log(coordinates);
+    const line = turf.lineString(coordinates);
+    const bbox = turf.bbox(line);
+    const bounds = mapboxgl.LngLatBounds.convert(bbox as any);
 
     const { longitude, latitude, zoom } = new WebMercatorViewport({
       width: 400,
       height: 400,
-    }).fitBounds([...geojsonRouteLayer.geometry.coordinates] as any, {
+    }).fitBounds(bounds.toArray() as any, {
       padding: 20,
       offset: [0, -100],
     });

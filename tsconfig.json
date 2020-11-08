@@ -21,7 +21,7 @@
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx", "scripts/polyline/convert.js"
   ],
   "exclude": [
     "node_modules"
