@@ -17,7 +17,10 @@ import MapView, {
   DEFAULT_MAP_VIEWPORT,
   MapViewPort,
 } from "../../component/Map/MapView";
-import { parseCoordinatesByMultiLine } from "../../service/points/parser";
+import {
+  parseCoordinatesByMultiLine,
+  parseCoordinatesBySingleLine,
+} from "../../service/points/parser";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -65,12 +68,22 @@ const SymbolLayer: React.FC = () => {
       : null;
     setGeojsonRouteLayer(geojsonRouteLayer);
 
-    const coordinates = parseCoordinatesByMultiLine(points).map((c) => {
-      return {
-        type: "Feature",
-        geometry: { type: "Point", coordinates: [c.lng, c.lat] },
-      };
-    });
+    let coordinates;
+    if (points.indexOf(";") > 0) {
+      coordinates = parseCoordinatesBySingleLine(points).map((c) => {
+        return {
+          type: "Feature",
+          geometry: { type: "Point", coordinates: [c.lng, c.lat] },
+        };
+      });
+    } else {
+      coordinates = parseCoordinatesByMultiLine(points).map((c) => {
+        return {
+          type: "Feature",
+          geometry: { type: "Point", coordinates: [c.lng, c.lat] },
+        };
+      });
+    }
 
     const geojsonPoint =
       coordinates.length > 0
