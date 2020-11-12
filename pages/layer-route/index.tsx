@@ -5,7 +5,7 @@ import {
   Grid,
   makeStyles,
   Toolbar,
-  Typography,
+  Typography
 } from "@material-ui/core";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import { isEmpty } from "lodash";
@@ -18,7 +18,7 @@ import { Layer, Source, WebMercatorViewport } from "react-map-gl";
 import turf from "turf";
 import MapView, {
   DEFAULT_MAP_VIEWPORT,
-  MapViewPort,
+  MapViewPort
 } from "../../component/Map/MapView";
 import { parseCoordinatesByMultiLine } from "../../service/points/parser";
 
@@ -39,14 +39,8 @@ const SymbolLayer: NextPage<Props, any> = (props) => {
   console.log(props);
   const classes = useStyles();
   const [viewport, setViewPort] = useState<MapViewPort>(DEFAULT_MAP_VIEWPORT);
-  const [encodedPolyline, setEncodedPolyline] = useState<string>(
-    props.query.pl ?? ""
-    // "ivy`cAskvqiGtxNl{IxlKdaG"
-  );
-  const [points, setPoints] = useState<string>(
-    props.query.points ??
-      "136.899219,35.175782;136.900863,35.158444\n136.800863,35.158444"
-  );
+  const [encodedPolyline, setEncodedPolyline] = useState<string>("");
+  const [points, setPoints] = useState<string>("");
   const [geojsonRouteLayer, setGeojsonRouteLayer] = useState<
     GeoJSON.Feature<GeoJSON.LineString | null>
   >(null);
@@ -98,7 +92,12 @@ const SymbolLayer: NextPage<Props, any> = (props) => {
    */
   useEffect(() => {
     onMapUpdate();
-  }, []);
+  }, [encodedPolyline, points]);
+
+  useEffect(() => {
+    setEncodedPolyline(props.query.pl ?? "");
+    setPoints(props.query.points ?? "");
+  }, [props]);
 
   /**
    * 地図移動
